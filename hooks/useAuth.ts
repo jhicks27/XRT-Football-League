@@ -11,7 +11,7 @@ import {
   sendPasswordResetEmail,
   User,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, enableNetwork, getFirestore } from "firebase/firestore";
+import { doc, getDoc, setDoc, enableNetwork, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { UserProfile, UserRole } from "@/types";
 
@@ -26,32 +26,53 @@ export function useAuth() {
     // Ensure Firestore network is enabled
     enableNetwork(db).catch(() => {});
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let profileUnsub: (() => void) | null = null;
+
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+      // Clean up previous profile listener
+      if (profileUnsub) {
+        profileUnsub();
+        profileUnsub = null;
+      }
       if (firebaseUser) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-          if (userDoc.exists()) {
-            setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+        // Use onSnapshot instead of getDoc — it works offline and retries automatically
+        profileUnsub = onSnapshot(
+          doc(db, "users", firebaseUser.uid),
+          (snapshot) => {
+            if (snapshot.exists()) {
+              setProfile({ id: snapshot.id, ...snapshot.data() } as UserProfile);
+            } else {
+              setProfile(null);
+            }
+            setLoading(false);
+          },
+          (err) => {
+            console.warn("Could not fetch user profile:", err);
+            setProfile(null);
+            setLoading(false);
           }
-        } catch (err) {
-          console.warn("Could not fetch user profile:", err);
-          // Don't block the UI — just skip profile loading
-          setProfile(null);
-        }
+        );
       } else {
         setProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (profileUnsub) profileUnsub();
+    };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
-    const userDoc = await getDoc(doc(db, "users", cred.user.uid));
-    if (userDoc.exists()) {
-      setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+    try {
+      const userDoc = await getDoc(doc(db, "users", cred.user.uid));
+      if (userDoc.exists()) {
+        setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+      }
+    } catch {
+      // Profile will be picked up by the onSnapshot listener
     }
     return cred;
   }, []);

@@ -26,10 +26,12 @@ export function useCollection<T extends { id: string }>(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const q = query(collection(db, collectionName), ...constraints);
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
+        if (cancelled) return;
         const items = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -38,11 +40,15 @@ export function useCollection<T extends { id: string }>(
         setLoading(false);
       },
       (err) => {
+        if (cancelled) return;
         setError(err.message);
         setLoading(false);
       }
     );
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      try { unsubscribe(); } catch (_) {}
+    };
   }, [collectionName]);
 
   return { data, loading, error };
@@ -58,9 +64,11 @@ export function useDocument<T>(collectionName: string, docId: string | undefined
       setLoading(false);
       return;
     }
+    let cancelled = false;
     const unsubscribe = onSnapshot(
       doc(db, collectionName, docId),
       (snapshot) => {
+        if (cancelled) return;
         if (snapshot.exists()) {
           setData({ id: snapshot.id, ...snapshot.data() } as T);
         } else {
@@ -69,11 +77,15 @@ export function useDocument<T>(collectionName: string, docId: string | undefined
         setLoading(false);
       },
       (err) => {
+        if (cancelled) return;
         setError(err.message);
         setLoading(false);
       }
     );
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      try { unsubscribe(); } catch (_) {}
+    };
   }, [collectionName, docId]);
 
   return { data, loading, error };
