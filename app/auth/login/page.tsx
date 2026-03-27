@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { ScanFace } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useBiometric } from "@/hooks/useBiometric";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { doc, getDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { signInWithCustomToken } from "firebase/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,7 +20,17 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, signInWithGoogle } = useAuth();
+  const { available, checkAvailability, authenticateBiometric, isBiometricRegistered } = useBiometric();
+  const [biometricReady, setBiometricReady] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    checkAvailability().then((avail) => {
+      if (avail && isBiometricRegistered()) {
+        setBiometricReady(true);
+      }
+    });
+  }, [checkAvailability, isBiometricRegistered]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +41,30 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Failed to sign in");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBiometric = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const userId = await authenticateBiometric();
+      if (userId) {
+        // Biometric verified — check if user exists in Firestore
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          // Redirect to dashboard — the auth state listener will pick up the session
+          router.push("/dashboard");
+        } else {
+          setError("Biometric verified but user not found. Please sign in with email.");
+        }
+      } else {
+        setError("Biometric authentication failed. Please sign in with email.");
+      }
+    } catch (err: any) {
+      setError("Biometric failed. Use email/password instead.");
     } finally {
       setLoading(false);
     }
@@ -77,6 +116,28 @@ export default function LoginPage() {
             </motion.div>
           )}
 
+          {/* Biometric Quick Login */}
+          {biometricReady && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
+              <button
+                onClick={handleBiometric}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-gray-900 dark:bg-white dark:text-gray-900 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold text-lg"
+              >
+                <ScanFace className="w-6 h-6" />
+                Sign in with Face ID / Fingerprint
+              </button>
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-700" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-white dark:bg-gray-950 px-4 text-gray-500">or use email</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
               label="Email"
@@ -97,6 +158,11 @@ export default function LoginPage() {
             <Button type="submit" isLoading={loading} className="w-full" size="lg">
               Sign In
             </Button>
+            <div className="text-right mt-2">
+              <Link href="/auth/reset-password" className="text-sm text-primary-600 hover:text-primary-500 font-medium">
+                Forgot password?
+              </Link>
+            </div>
           </form>
 
           <div className="relative my-6">

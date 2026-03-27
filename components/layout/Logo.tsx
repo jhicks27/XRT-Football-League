@@ -77,7 +77,7 @@ export default function Logo({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   return (
     <Link href="/dashboard" className="flex items-center gap-3 group">
       <div className="transition-transform group-hover:scale-105">
-        <XRTLogoSVG size={s.icon} />
+        <img src="/images/logo.png" alt="XRT" width={s.icon} height={s.icon} className="rounded-lg" />
       </div>
       <div className="flex flex-col">
         <span className={`${s.title} font-black leading-none tracking-tight`}>

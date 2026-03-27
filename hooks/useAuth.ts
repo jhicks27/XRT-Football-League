@@ -8,6 +8,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut as firebaseSignOut,
+  sendPasswordResetEmail,
   User,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -84,8 +85,12 @@ export function useAuth() {
     setProfile(null);
   }, []);
 
+  const resetPassword = useCallback(async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  }, []);
+
   const isAdmin = profile?.role === "admin" || profile?.role === "executive";
   const isExecutive = profile?.role === "executive";
 
-  return { user, profile, loading, signIn, signUp, signInWithGoogle, signOut, isAdmin, isExecutive };
+  return { user, profile, loading, signIn, signUp, signInWithGoogle, signOut, resetPassword, isAdmin, isExecutive };
 }
