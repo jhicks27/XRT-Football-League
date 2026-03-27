@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { initializeFirestore, getFirestore, Firestore, memoryLocalCache } from "firebase/firestore";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -12,10 +12,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:000000000000:web:0000000000000000",
 };
 
-if (typeof window !== "undefined") {
-  console.log("Firebase config projectId:", firebaseConfig.projectId);
-}
-
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
@@ -24,16 +20,7 @@ let storage: FirebaseStorage;
 try {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
-  // Use memory cache + long polling to avoid IndexedDB and WebSocket issues
-  try {
-    db = initializeFirestore(app, {
-      localCache: memoryLocalCache(),
-      experimentalAutoDetectLongPolling: true,
-    });
-  } catch {
-    // Firestore already initialized (e.g. HMR), fall back to existing instance
-    db = getFirestore(app);
-  }
+  db = getFirestore(app);
   storage = getStorage(app);
 } catch (error) {
   console.error("Firebase initialization error:", error);

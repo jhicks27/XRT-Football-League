@@ -11,98 +11,76 @@ import {
   sendPasswordResetEmail,
   User,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, enableNetwork, onSnapshot } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { UserProfile, UserRole } from "@/types";
 
 const googleProvider = new GoogleAuthProvider();
 
+// Fetch profile via Firestore REST API — bypasses SDK connection issues
+async function fetchProfileREST(user: User): Promise<UserProfile | null> {
+  try {
+    const token = await user.getIdToken();
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${user.uid}`;
+
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const f = data.fields || {};
+    return {
+      id: user.uid,
+      name: f.name?.stringValue || user.displayName || "User",
+      email: f.email?.stringValue || user.email || "",
+      role: (f.role?.stringValue || "user") as UserRole,
+      createdAt: f.createdAt?.stringValue || new Date().toISOString(),
+      avatarUrl: f.avatarUrl?.stringValue,
+    };
+  } catch (err) {
+    console.warn("REST profile fetch failed:", err);
+    return null;
+  }
+}
+
+// Build a basic profile from Firebase Auth user data
+function fallbackProfile(user: User): UserProfile {
+  return {
+    id: user.uid,
+    name: user.displayName || user.email?.split("@")[0] || "User",
+    email: user.email || "",
+    role: "user" as UserRole,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const userRef = useRef<User | null>(null);
-  const profileLoaded = useRef(false);
 
   useEffect(() => {
-    enableNetwork(db).catch(() => {});
-
-    let profileUnsub: (() => void) | null = null;
-
-    // Safety timeout — if Firestore profile never loads, build fallback from auth data
-    const timeout = setTimeout(() => {
-      if (!profileLoaded.current && userRef.current) {
-        const u = userRef.current;
-        console.warn("Firestore timeout — using fallback profile");
-        setProfile({
-          id: u.uid,
-          name: u.displayName || u.email?.split("@")[0] || "User",
-          email: u.email || "",
-          role: "user" as UserRole,
-          createdAt: new Date().toISOString(),
-        });
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        // Try REST API first (bypasses SDK issues), then fallback to auth data
+        const p = await fetchProfileREST(firebaseUser);
+        setProfile(p || fallbackProfile(firebaseUser));
+      } else {
+        setProfile(null);
       }
       setLoading(false);
-    }, 3000);
-
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      userRef.current = firebaseUser;
-
-      if (profileUnsub) {
-        profileUnsub();
-        profileUnsub = null;
-      }
-      if (firebaseUser) {
-        profileUnsub = onSnapshot(
-          doc(db, "users", firebaseUser.uid),
-          (snapshot) => {
-            profileLoaded.current = true;
-            if (snapshot.exists()) {
-              setProfile({ id: snapshot.id, ...snapshot.data() } as UserProfile);
-            } else {
-              setProfile(null);
-            }
-            setLoading(false);
-          },
-          (err) => {
-            console.warn("Could not fetch user profile:", err);
-            // Build fallback profile from auth data
-            if (!profileLoaded.current) {
-              setProfile({
-                id: firebaseUser.uid,
-                name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
-                email: firebaseUser.email || "",
-                role: "user" as UserRole,
-                createdAt: new Date().toISOString(),
-              });
-            }
-            setLoading(false);
-          }
-        );
-      } else {
-        profileLoaded.current = false;
-        setProfile(null);
-        setLoading(false);
-      }
     });
-    return () => {
-      clearTimeout(timeout);
-      unsubscribe();
-      if (profileUnsub) profileUnsub();
-    };
+    return () => unsubscribe();
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
-    try {
-      const userDoc = await getDoc(doc(db, "users", cred.user.uid));
-      if (userDoc.exists()) {
-        setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
-      }
-    } catch {
-      // Profile will be picked up by the onSnapshot listener
-    }
+    const p = await fetchProfileREST(cred.user);
+    setProfile(p || fallbackProfile(cred.user));
     return cred;
   }, []);
 
@@ -121,9 +99,9 @@ export function useAuth() {
 
   const signInWithGoogle = useCallback(async () => {
     const cred = await signInWithPopup(auth, googleProvider);
-    const userDoc = await getDoc(doc(db, "users", cred.user.uid));
-    if (userDoc.exists()) {
-      setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+    const p = await fetchProfileREST(cred.user);
+    if (p) {
+      setProfile(p);
     } else {
       // First time Google sign-in — create user profile
       const newProfile: Omit<UserProfile, "id"> = {
@@ -133,7 +111,11 @@ export function useAuth() {
         avatarUrl: cred.user.photoURL || undefined,
         createdAt: new Date().toISOString(),
       };
-      await setDoc(doc(db, "users", cred.user.uid), newProfile);
+      try {
+        await setDoc(doc(db, "users", cred.user.uid), newProfile);
+      } catch {
+        // SDK write failed — profile will still work from auth data
+      }
       setProfile({ id: cred.user.uid, ...newProfile });
     }
     return cred;
