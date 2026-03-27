@@ -12,6 +12,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:000000000000:web:0000000000000000",
 };
 
+if (typeof window !== "undefined") {
+  console.log("Firebase config:", JSON.stringify({
+    projectId: firebaseConfig.projectId,
+    authDomain: firebaseConfig.authDomain,
+    storageBucket: firebaseConfig.storageBucket,
+    hasApiKey: firebaseConfig.apiKey !== "placeholder",
+    hasAppId: firebaseConfig.appId !== "1:000000000000:web:0000000000000000",
+  }));
+}
+
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
