@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -21,33 +21,43 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const userRef = useRef<User | null>(null);
+  const profileLoaded = useRef(false);
 
   useEffect(() => {
-    // Ensure Firestore network is enabled
     enableNetwork(db).catch(() => {});
 
     let profileUnsub: (() => void) | null = null;
 
-    // Safety timeout — never hang on loading forever
+    // Safety timeout — if Firestore profile never loads, build fallback from auth data
     const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn("Auth loading timeout — proceeding without profile");
-        setLoading(false);
+      if (!profileLoaded.current && userRef.current) {
+        const u = userRef.current;
+        console.warn("Firestore timeout — using fallback profile");
+        setProfile({
+          id: u.uid,
+          name: u.displayName || u.email?.split("@")[0] || "User",
+          email: u.email || "",
+          role: "user" as UserRole,
+          createdAt: new Date().toISOString(),
+        });
       }
-    }, 5000);
+      setLoading(false);
+    }, 3000);
 
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
-      // Clean up previous profile listener
+      userRef.current = firebaseUser;
+
       if (profileUnsub) {
         profileUnsub();
         profileUnsub = null;
       }
       if (firebaseUser) {
-        // Use onSnapshot instead of getDoc — it works offline and retries automatically
         profileUnsub = onSnapshot(
           doc(db, "users", firebaseUser.uid),
           (snapshot) => {
+            profileLoaded.current = true;
             if (snapshot.exists()) {
               setProfile({ id: snapshot.id, ...snapshot.data() } as UserProfile);
             } else {
@@ -57,11 +67,21 @@ export function useAuth() {
           },
           (err) => {
             console.warn("Could not fetch user profile:", err);
-            setProfile(null);
+            // Build fallback profile from auth data
+            if (!profileLoaded.current) {
+              setProfile({
+                id: firebaseUser.uid,
+                name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
+                email: firebaseUser.email || "",
+                role: "user" as UserRole,
+                createdAt: new Date().toISOString(),
+              });
+            }
             setLoading(false);
           }
         );
       } else {
+        profileLoaded.current = false;
         setProfile(null);
         setLoading(false);
       }
