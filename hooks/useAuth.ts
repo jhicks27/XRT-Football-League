@@ -11,7 +11,7 @@ import {
   sendPasswordResetEmail,
   User,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, enableNetwork, getFirestore } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { UserProfile, UserRole } from "@/types";
 
@@ -23,6 +23,9 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Ensure Firestore network is enabled
+    enableNetwork(db).catch(() => {});
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
@@ -32,17 +35,9 @@ export function useAuth() {
             setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
           }
         } catch (err) {
-          console.warn("Could not fetch user profile, retrying...", err);
-          // Retry once after a short delay
-          try {
-            await new Promise((r) => setTimeout(r, 2000));
-            const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-            if (userDoc.exists()) {
-              setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
-            }
-          } catch (retryErr) {
-            console.error("Failed to fetch user profile after retry", retryErr);
-          }
+          console.warn("Could not fetch user profile:", err);
+          // Don't block the UI — just skip profile loading
+          setProfile(null);
         }
       } else {
         setProfile(null);

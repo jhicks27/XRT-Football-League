@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -22,32 +22,16 @@ let db: Firestore;
 let storage: FirebaseStorage;
 
 try {
-  if (getApps().length === 0) {
-    app = initializeApp(firebaseConfig);
-    // Initialize Firestore with persistent cache for better offline/online handling
-    db = initializeFirestore(app, {
-      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
-    });
-  } else {
-    app = getApps()[0];
-    db = getFirestore(app);
-  }
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
+  db = getFirestore(app);
   storage = getStorage(app);
 } catch (error) {
   console.error("Firebase initialization error:", error);
-  // Fallback — try basic init
-  try {
-    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    auth = getAuth(app);
-    db = getFirestore(app);
-    storage = getStorage(app);
-  } catch (fallbackError) {
-    app = {} as FirebaseApp;
-    auth = {} as Auth;
-    db = {} as Firestore;
-    storage = {} as FirebaseStorage;
-  }
+  app = {} as FirebaseApp;
+  auth = {} as Auth;
+  db = {} as Firestore;
+  storage = {} as FirebaseStorage;
 }
 
 export { auth, db, storage };
