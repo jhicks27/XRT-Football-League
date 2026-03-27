@@ -24,9 +24,12 @@ let storage: FirebaseStorage;
 try {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
-  // Use memory cache to avoid IndexedDB persistence issues that cause "client is offline" errors
+  // Use memory cache + long polling to avoid IndexedDB and WebSocket issues
   try {
-    db = initializeFirestore(app, { localCache: memoryLocalCache() });
+    db = initializeFirestore(app, {
+      localCache: memoryLocalCache(),
+      experimentalAutoDetectLongPolling: true,
+    });
   } catch {
     // Firestore already initialized (e.g. HMR), fall back to existing instance
     db = getFirestore(app);

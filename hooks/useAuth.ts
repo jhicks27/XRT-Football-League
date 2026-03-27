@@ -28,6 +28,14 @@ export function useAuth() {
 
     let profileUnsub: (() => void) | null = null;
 
+    // Safety timeout — never hang on loading forever
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.warn("Auth loading timeout — proceeding without profile");
+        setLoading(false);
+      }
+    }, 5000);
+
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       // Clean up previous profile listener
@@ -59,6 +67,7 @@ export function useAuth() {
       }
     });
     return () => {
+      clearTimeout(timeout);
       unsubscribe();
       if (profileUnsub) profileUnsub();
     };
