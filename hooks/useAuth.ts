@@ -26,9 +26,23 @@ export function useAuth() {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
-        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-        if (userDoc.exists()) {
-          setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+        try {
+          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+          if (userDoc.exists()) {
+            setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+          }
+        } catch (err) {
+          console.warn("Could not fetch user profile, retrying...", err);
+          // Retry once after a short delay
+          try {
+            await new Promise((r) => setTimeout(r, 2000));
+            const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+            if (userDoc.exists()) {
+              setProfile({ id: userDoc.id, ...userDoc.data() } as UserProfile);
+            }
+          } catch (retryErr) {
+            console.error("Failed to fetch user profile after retry", retryErr);
+          }
         }
       } else {
         setProfile(null);
