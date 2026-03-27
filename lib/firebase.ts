@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { initializeFirestore, getFirestore, Firestore } from "firebase/firestore";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -20,12 +20,7 @@ let storage: FirebaseStorage;
 try {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
-  // Force long polling — the default WebSocket transport fails on some deployments
-  try {
-    db = initializeFirestore(app, { experimentalForceLongPolling: true });
-  } catch {
-    db = getFirestore(app);
-  }
+  db = getFirestore(app);
   storage = getStorage(app);
 } catch (error) {
   console.error("Firebase initialization error:", error);
