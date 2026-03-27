@@ -15,7 +15,7 @@ import { Championship, Team, Player } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 
 export default function AdminChampionshipPage() {
-  const { isExecutive } = useAuth();
+  const { isExecutive, isAdmin } = useAuth();
   const { data: championships, loading } = useCollection<Championship>("championship", [orderBy("date", "desc")]);
   const { data: teams } = useCollection<Team>("teams", [orderBy("name")]);
   const { data: players } = useCollection<Player>("players", [orderBy("name")]);
@@ -36,12 +36,12 @@ export default function AdminChampionshipPage() {
 
   if (loading) return <LoadingSpinner size="lg" />;
 
-  if (!isExecutive) {
+  if (!isExecutive && !isAdmin) {
     return (
       <div className="text-center py-20">
         <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-gray-600 dark:text-gray-400">Executive Access Required</h2>
-        <p className="text-gray-500 mt-2">Only executives can manage championship data.</p>
+        <h2 className="text-xl font-bold text-gray-600 dark:text-gray-400">Admin Access Required</h2>
+        <p className="text-gray-500 mt-2">Only admins and executives can manage championship data.</p>
       </div>
     );
   }

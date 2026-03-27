@@ -54,7 +54,7 @@ service cloud.firestore {
     // Championship collection
     match /championship/{champId} {
       allow read: if isAuthenticated();
-      allow create, update, delete: if isExecutive();
+      allow create, update, delete: if isAdmin();
     }
 
     // Notifications collection
