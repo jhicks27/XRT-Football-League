@@ -29,7 +29,7 @@ export default function TeamsPage() {
     <div>
       <PageHeader
         title="Teams"
-        description="All teams in the XRT Football League"
+        description="All teams in the XRT Rough Touch Football League"
       />
 
       <div className="mb-6 max-w-md">

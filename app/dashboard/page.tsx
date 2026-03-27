@@ -11,6 +11,7 @@ import { Team, Player, Game, Notification } from "@/types";
 import { orderBy, limit } from "@/hooks/useFirestore";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import StatsHighlight from "@/components/dashboard/StatsHighlight";
 
 const container = {
   hidden: { opacity: 0 },
@@ -130,8 +131,9 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Top Players + Notifications */}
+        {/* Stats + Top Players + Notifications */}
         <motion.div variants={item} className="lg:col-span-1 space-y-6">
+          <StatsHighlight />
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Star className="w-5 h-5 text-yellow-500" />

@@ -1,6 +1,6 @@
-# XRT Football League
+# XRT Rough Touch Football League
 
-A full-featured football league management web application built with Next.js, Firebase, Tailwind CSS, and Framer Motion.
+A full-featured rough touch football league management web application built with Next.js, Firebase, Tailwind CSS, and Framer Motion.
 
 ## Features
 
@@ -115,7 +115,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```bash
 git init
 git add .
-git commit -m "Initial commit - XRT Football League"
+git commit -m "Initial commit - XRT Rough Touch Football League"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/xrt-football-league.git
 git push -u origin main

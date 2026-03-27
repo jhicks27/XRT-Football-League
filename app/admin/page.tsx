@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Users, UserCircle, Calendar, Trophy, Award, Activity, Settings } from "lucide-react";
+import { Shield, Users, UserCircle, Calendar, Trophy, Award, Activity, Settings, Crown, Video } from "lucide-react";
 import Card from "@/components/ui/Card";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PageHeader from "@/components/layout/PageHeader";
@@ -19,6 +19,9 @@ const adminLinks = [
   { href: "/admin/playoffs", label: "Manage Playoffs", icon: Trophy, color: "text-yellow-500 bg-yellow-50 dark:bg-yellow-950", desc: "Set up bracket, update results" },
   { href: "/admin/championship", label: "Championship", icon: Award, color: "text-purple-500 bg-purple-50 dark:bg-purple-950", desc: "Set champion, MVP, highlights" },
   { href: "/admin/activity", label: "Activity Log", icon: Activity, color: "text-red-500 bg-red-50 dark:bg-red-950", desc: "View all admin actions" },
+  { href: "/admin/users", label: "Manage Users", icon: Crown, color: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950", desc: "Promote/demote user roles" },
+  { href: "/admin/media", label: "Manage Media", icon: Video, color: "text-pink-500 bg-pink-50 dark:bg-pink-950", desc: "YouTube highlights, interviews, images" },
+  { href: "/admin/seasons", label: "Season Archives", icon: Calendar, color: "text-teal-500 bg-teal-50 dark:bg-teal-950", desc: "Manage historical season records" },
 ];
 
 export default function AdminPage() {

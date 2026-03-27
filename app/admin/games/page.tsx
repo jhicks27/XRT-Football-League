@@ -15,7 +15,7 @@ import { Game, Team } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import { formatDate } from "@/lib/utils";
 
-const emptyGame: { homeTeamId: string; awayTeamId: string; homeTeamName: string; awayTeamName: string; homeTeamLogo: string; awayTeamLogo: string; homeScore: number; awayScore: number; date: string; time: string; venue: string; status: "scheduled" | "in_progress" | "final"; week: number; season: string } = { homeTeamId: "", awayTeamId: "", homeTeamName: "", awayTeamName: "", homeTeamLogo: "", awayTeamLogo: "", homeScore: 0, awayScore: 0, date: "", time: "", venue: "", status: "scheduled", week: 1, season: "2025" };
+const emptyGame: { homeTeamId: string; awayTeamId: string; homeTeamName: string; awayTeamName: string; homeTeamLogo: string; awayTeamLogo: string; homeScore: number; awayScore: number; date: string; time: string; venue: string; status: "scheduled" | "in_progress" | "final"; week: number; season: string; highlightYoutubeUrls: string[]; recap: string } = { homeTeamId: "", awayTeamId: "", homeTeamName: "", awayTeamName: "", homeTeamLogo: "", awayTeamLogo: "", homeScore: 0, awayScore: 0, date: "", time: "", venue: "", status: "scheduled", week: 1, season: "2025", highlightYoutubeUrls: [] as string[], recap: "" };
 
 export default function AdminGamesPage() {
   const { data: games, loading } = useCollection<Game>("games", [orderBy("date", "desc")]);
@@ -31,7 +31,7 @@ export default function AdminGamesPage() {
   const openCreate = () => { setEditing(null); setForm(emptyGame); setModalOpen(true); };
   const openEdit = (g: Game) => {
     setEditing(g);
-    setForm({ homeTeamId: g.homeTeamId, awayTeamId: g.awayTeamId, homeTeamName: g.homeTeamName, awayTeamName: g.awayTeamName, homeTeamLogo: g.homeTeamLogo, awayTeamLogo: g.awayTeamLogo, homeScore: g.homeScore, awayScore: g.awayScore, date: g.date, time: g.time, venue: g.venue, status: g.status, week: g.week, season: g.season });
+    setForm({ homeTeamId: g.homeTeamId, awayTeamId: g.awayTeamId, homeTeamName: g.homeTeamName, awayTeamName: g.awayTeamName, homeTeamLogo: g.homeTeamLogo, awayTeamLogo: g.awayTeamLogo, homeScore: g.homeScore, awayScore: g.awayScore, date: g.date, time: g.time, venue: g.venue, status: g.status, week: g.week, season: g.season, highlightYoutubeUrls: g.highlightYoutubeUrls || [], recap: g.recap || "" });
     setModalOpen(true);
   };
 
@@ -116,6 +116,28 @@ export default function AdminGamesPage() {
             <Input label="Time" value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} placeholder="7:00 PM" />
           </div>
           <Input label="Venue" value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Game Recap</label>
+            <textarea
+              value={form.recap}
+              onChange={(e) => setForm({ ...form, recap: e.target.value })}
+              placeholder="Write a brief game recap..."
+              rows={3}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              YouTube Highlights (one URL per line)
+            </label>
+            <textarea
+              value={(form.highlightYoutubeUrls || []).join("\n")}
+              onChange={(e) => setForm({ ...form, highlightYoutubeUrls: e.target.value.split("\n").filter(Boolean) })}
+              placeholder={"https://youtube.com/watch?v=...\nhttps://youtube.com/watch?v=..."}
+              rows={3}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <Input label="Week" type="number" value={form.week} onChange={(e) => setForm({ ...form, week: parseInt(e.target.value) || 1 })} />
             <div>

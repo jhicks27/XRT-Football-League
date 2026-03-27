@@ -110,7 +110,7 @@ export default function PlayoffsPage() {
 
   return (
     <div>
-      <PageHeader title="Playoffs" description="XRT Football League Playoff Bracket" />
+      <PageHeader title="Playoffs" description="XRT Rough Touch Football League Playoff Bracket" />
 
       {roundNumbers.length === 0 ? (
         <EmptyState icon={Trophy} title="No playoff data" description="The playoff bracket hasn't been set up yet" />

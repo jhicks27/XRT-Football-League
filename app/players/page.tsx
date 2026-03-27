@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { UserCircle, Search, Filter, Trophy } from "lucide-react";
+import { UserCircle, Search, Filter, Trophy, GitCompare } from "lucide-react";
 import Card from "@/components/ui/Card";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PageHeader from "@/components/layout/PageHeader";
@@ -12,6 +12,7 @@ import { useCollection } from "@/hooks/useFirestore";
 import { Player } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 const positions = ["All", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "CB", "S", "K", "P"];
@@ -80,6 +81,12 @@ export default function PlayersPage() {
         >
           <Trophy className="w-4 h-4 inline mr-1" /> Leaderboard
         </button>
+        <Link
+          href="/players/compare"
+          className={`px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700`}
+        >
+          <GitCompare className="w-4 h-4 inline mr-1" /> Compare
+        </Link>
       </div>
 
       {view === "grid" ? (

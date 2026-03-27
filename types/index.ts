@@ -68,6 +68,8 @@ export interface Game {
   status: "scheduled" | "in_progress" | "final";
   week: number;
   season: string;
+  highlightYoutubeUrls?: string[];
+  recap?: string;
 }
 
 export interface PlayoffMatchup {
@@ -125,6 +127,46 @@ export interface MvpVote {
   playerName: string;
   userId: string;
   season: string;
+  createdAt: string;
+}
+
+export interface MediaItem {
+  id: string;
+  title: string;
+  description: string;
+  type: "youtube" | "image" | "video";
+  url: string;
+  thumbnailUrl?: string;
+  category: "highlight" | "interview" | "recap" | "announcement";
+  gameId?: string;
+  teamId?: string;
+  playerId?: string;
+  featured: boolean;
+  createdAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  teamId: string;
+  userId: string;
+  userName: string;
+  userRole: UserRole;
+  message: string;
+  createdAt: string;
+}
+
+export interface SeasonArchive {
+  id: string;
+  season: string;
+  championTeamName: string;
+  championTeamLogo: string;
+  mvpPlayerName: string;
+  finalRecord: string;
+  totalGames: number;
+  totalPlayers: number;
+  totalTeams: number;
+  topScorer: string;
+  topScorerTDs: number;
   createdAt: string;
 }
 

@@ -14,6 +14,8 @@ import {
   Shield,
   Bell,
   Vote,
+  Video,
+  MessageCircle,
   Sun,
   Moon,
   Menu,
@@ -34,6 +36,9 @@ const navItems = [
   { href: "/playoffs", label: "Playoffs", icon: Trophy },
   { href: "/championship", label: "Championship", icon: Award },
   { href: "/mvp-voting", label: "MVP Vote", icon: Vote },
+  { href: "/media", label: "Media", icon: Video },
+  { href: "/chat", label: "Chat", icon: MessageCircle },
+  { href: "/seasons", label: "Seasons", icon: Calendar },
 ];
 
 export default function Navbar() {
