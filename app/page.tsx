@@ -145,6 +145,106 @@ export default function HomePage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Owner / Founder Section */}
+      <section className="relative bg-black py-24 px-4 overflow-hidden">
+        {/* Background accents */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.06),transparent_60%)]" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <span className="text-primary-500 text-sm font-bold tracking-[0.3em] uppercase">The Visionary</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white mt-3">Meet the Founder</h2>
+            <div className="h-1 w-20 bg-primary-600 mx-auto mt-6 rounded-full" />
+          </motion.div>
+
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Photo */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+              className="flex-shrink-0"
+            >
+              <div className="relative">
+                <div className="absolute -inset-3 bg-gradient-to-br from-primary-600/30 to-transparent rounded-3xl blur-xl" />
+                <div className="relative w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden border-2 border-gray-800 shadow-2xl">
+                  <Image
+                    src="/images/owner.jpg"
+                    alt="Joseph Cox Jr."
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-4 -right-4 bg-primary-600 text-white px-5 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary-600/30">
+                  FOUNDER & OWNER
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Bio */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex-1"
+            >
+              <h3 className="text-3xl md:text-4xl font-black text-white mb-2">
+                Joseph Cox Jr.
+              </h3>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-primary-500 font-semibold text-sm tracking-wide">Creator of XRT Football</span>
+                <span className="text-gray-700">|</span>
+                <span className="text-gray-500 text-sm">Est. Fall 2022</span>
+              </div>
+
+              <div className="space-y-4 text-gray-400 leading-relaxed">
+                <p>
+                  Joseph Cox Jr. is making a powerful impact both on and off the field as the proud owner of the
+                  <span className="text-white font-semibold"> Xtreme Rough Touch Football League</span> — a completely
+                  unique style of football that has never been played this way before.
+                </p>
+                <p>
+                  Created in the fall of 2022 by Joseph Cox Jr., Khalif McBurrows, and Kameron Dickerson, the idea
+                  officially came to life in the spring of 2023 and has continued to grow stronger ever since. The league
+                  now runs two full seasons every year and has quickly built a loyal following, with more than
+                  <span className="text-primary-500 font-bold"> 250+ players and spectators</span> showing up at the
+                  field every Sunday.
+                </p>
+                <p>
+                  Beyond the game, the league has had an incredible impact on the community. Through a partnership with
+                  <span className="text-white font-semibold"> State Representative Anthony Belmon</span>, the league has
+                  helped feed the homeless, connect people with employment opportunities, assist with criminal record
+                  expungements, and donate pampers to families in need.
+                </p>
+                <p>
+                  Several players have shared that being part of the league has
+                  <span className="text-white font-semibold"> helped save their lives</span> — keeping them on a positive
+                  path and giving them a place to relieve stress and escape from everyday challenges every Sunday.
+                </p>
+              </div>
+
+              {/* Co-founders */}
+              <div className="mt-8 pt-6 border-t border-gray-800/50">
+                <span className="text-gray-600 text-xs font-semibold tracking-[0.2em] uppercase">Co-Founded with</span>
+                <div className="flex gap-6 mt-3">
+                  <span className="text-gray-400 font-medium text-sm">Khalif McBurrows</span>
+                  <span className="text-gray-400 font-medium text-sm">Kameron Dickerson</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
