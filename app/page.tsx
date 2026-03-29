@@ -127,9 +127,9 @@ export default function HomePage() {
             className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { label: "Teams", value: "16+" },
-              { label: "Players", value: "200+" },
-              { label: "Games", value: "100+" },
+              { label: "Teams", value: "8+" },
+              { label: "Players", value: "50+" },
+              { label: "Games", value: "10+" },
               { label: "Seasons", value: "Live" },
             ].map((stat, i) => (
               <motion.div
