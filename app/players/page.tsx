@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-const positions = ["All", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "CB", "S", "K", "P"];
+const positions = ["All", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "CB", "ATH"];
 
 export default function PlayersPage() {
   const { data: players, loading } = useCollection<Player>("players", [orderBy("name")]);

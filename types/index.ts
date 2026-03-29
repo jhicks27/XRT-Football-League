@@ -42,7 +42,7 @@ export interface Player {
   name: string;
   teamId: string;
   teamName?: string;
-  number: number;
+  number: string | number;
   position: string;
   imageUrl: string;
   height: string;
