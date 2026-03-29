@@ -176,12 +176,13 @@ export default function HomePage() {
             >
               <div className="relative">
                 <div className="absolute -inset-3 bg-gradient-to-br from-primary-600/30 to-transparent rounded-3xl blur-xl" />
-                <div className="relative w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden border-2 border-gray-800 shadow-2xl">
+                <div className="relative w-72 md:w-80 rounded-2xl overflow-hidden border-2 border-gray-800 shadow-2xl">
                   <Image
                     src="/images/owner.jpg"
                     alt="Joseph Cox Jr."
-                    fill
-                    className="object-cover"
+                    width={320}
+                    height={400}
+                    className="w-full h-auto"
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-primary-600 text-white px-5 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary-600/30">
