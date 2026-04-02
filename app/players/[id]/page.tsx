@@ -56,9 +56,14 @@ export default function PlayerDetailPage() {
             </div>
             <div className="text-center md:text-left">
               <h1 className="text-3xl font-black text-gray-900 dark:text-white">{player.name}</h1>
-              <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
+              <div className="flex items-center gap-2 mt-2 justify-center md:justify-start flex-wrap">
                 <Badge variant="info">{player.position}</Badge>
                 <span className="text-gray-500">#{player.number}</span>
+                {player.experience && (
+                  <Badge variant={player.experience === "Rookie" ? "success" : player.experience === "Vet" ? "warning" : "default"}>
+                    {player.experience}
+                  </Badge>
+                )}
               </div>
               {player.teamName && (
                 <Link href={`/teams/${player.teamId}`} className="text-primary-600 hover:text-primary-500 font-semibold mt-2 inline-block">

@@ -16,7 +16,7 @@ import { orderBy } from "@/hooks/useFirestore";
 import Image from "next/image";
 
 const emptyStats = { gamesPlayed: 0, touchdowns: 0, passingYards: 0, rushingYards: 0, receivingYards: 0, completions: 0, attempts: 0, tackles: 0, sacks: 0, interceptions: 0, pbu: 0, fumbles: 0, pancakes: 0, fieldGoals: 0 };
-const emptyPlayer = { name: "", teamId: "", teamName: "", number: "", position: "", imageUrl: "", height: "", weight: 0, age: 0, stats: emptyStats };
+const emptyPlayer = { name: "", teamId: "", teamName: "", number: "", position: "", imageUrl: "", height: "", weight: 0, age: 0, experience: "Rookie", stats: emptyStats };
 
 export default function AdminPlayersPage() {
   const { data: players, loading } = useCollection<Player>("players", [orderBy("name")]);
@@ -34,7 +34,7 @@ export default function AdminPlayersPage() {
   const openCreate = () => { setEditing(null); setForm(emptyPlayer); setImageFile(null); setModalOpen(true); };
   const openEdit = (p: Player) => {
     setEditing(p);
-    setForm({ name: p.name, teamId: p.teamId, teamName: p.teamName || "", number: String(p.number), position: p.position, imageUrl: p.imageUrl, height: p.height, weight: p.weight, age: p.age, stats: { ...p.stats } });
+    setForm({ name: p.name, teamId: p.teamId, teamName: p.teamName || "", number: String(p.number), position: p.position, imageUrl: p.imageUrl, height: p.height, weight: p.weight, age: p.age, experience: p.experience || "Rookie", stats: { ...p.stats } });
     setImageFile(null);
     setModalOpen(true);
   };
@@ -130,10 +130,16 @@ export default function AdminPlayersPage() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Input label="Number" value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} placeholder="1, 7, OG, etc." />
             <Input label="Age" type="number" value={form.age} onChange={(e) => setForm({ ...form, age: parseInt(e.target.value) || 0 })} />
             <Input label="Weight (lbs)" type="number" value={form.weight} onChange={(e) => setForm({ ...form, weight: parseInt(e.target.value) || 0 })} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Experience</label>
+              <select value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                {["Rookie", "2nd Year", "3rd Year", "Vet"].map(exp => <option key={exp} value={exp}>{exp}</option>)}
+              </select>
+            </div>
           </div>
           <Input label="Height" value={form.height} onChange={(e) => setForm({ ...form, height: e.target.value })} placeholder="6'2&quot;" />
           <div>

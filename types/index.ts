@@ -51,6 +51,7 @@ export interface Player {
   height: string;
   weight: number;
   age: number;
+  experience: string;
   stats: PlayerStats;
   createdAt: string;
 }
