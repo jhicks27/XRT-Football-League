@@ -133,6 +133,9 @@ export default function PlayersPage() {
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Rec Yds</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Tackles</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Sacks</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">INTs</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">PBU</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Fumbles</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -152,6 +155,9 @@ export default function PlayersPage() {
                     <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.receivingYards.toLocaleString()}</td>
                     <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.tackles}</td>
                     <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.sacks}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.interceptions}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.pbu || 0}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.fumbles || 0}</td>
                   </tr>
                 ))}
               </tbody>

@@ -15,7 +15,7 @@ import { Player, Team } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import Image from "next/image";
 
-const emptyStats = { gamesPlayed: 0, touchdowns: 0, passingYards: 0, rushingYards: 0, receivingYards: 0, tackles: 0, sacks: 0, interceptions: 0, fieldGoals: 0, completions: 0, attempts: 0 };
+const emptyStats = { gamesPlayed: 0, touchdowns: 0, passingYards: 0, rushingYards: 0, receivingYards: 0, completions: 0, attempts: 0, tackles: 0, sacks: 0, interceptions: 0, pbu: 0, fumbles: 0, pancakes: 0, fieldGoals: 0 };
 const emptyPlayer = { name: "", teamId: "", teamName: "", number: "", position: "", imageUrl: "", height: "", weight: 0, age: 0, stats: emptyStats };
 
 export default function AdminPlayersPage() {
@@ -140,10 +140,22 @@ export default function AdminPlayersPage() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Photo</label>
             <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="text-sm text-gray-500" />
           </div>
-          <h3 className="font-bold text-gray-900 dark:text-white text-sm pt-2 border-t border-gray-200 dark:border-gray-700">Stats</h3>
+          <h3 className="font-bold text-gray-900 dark:text-white text-sm pt-2 border-t border-gray-200 dark:border-gray-700">General</h3>
           <div className="grid grid-cols-2 gap-3">
-            {Object.entries(form.stats).map(([key, val]) => (
-              <Input key={key} label={key.replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase())} type="number" value={val} onChange={(e) => updateStats(key, parseInt(e.target.value) || 0)} />
+            {[["gamesPlayed", "Games Played"], ["touchdowns", "Touchdowns"]].map(([key, label]) => (
+              <Input key={key} label={label} type="number" value={(form.stats as any)[key]} onChange={(e) => updateStats(key, parseInt(e.target.value) || 0)} />
+            ))}
+          </div>
+          <h3 className="font-bold text-gray-900 dark:text-white text-sm pt-2 border-t border-gray-200 dark:border-gray-700">Offense</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {[["passingYards", "Passing Yards"], ["rushingYards", "Rushing Yards"], ["receivingYards", "Receiving Yards"], ["completions", "Completions"], ["attempts", "Attempts"]].map(([key, label]) => (
+              <Input key={key} label={label} type="number" value={(form.stats as any)[key]} onChange={(e) => updateStats(key, parseInt(e.target.value) || 0)} />
+            ))}
+          </div>
+          <h3 className="font-bold text-gray-900 dark:text-white text-sm pt-2 border-t border-gray-200 dark:border-gray-700">Defense</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {[["tackles", "Tackles"], ["sacks", "Sacks"], ["interceptions", "Interceptions"], ["pbu", "PBU"], ["fumbles", "Fumbles"], ["pancakes", "Pancakes"]].map(([key, label]) => (
+              <Input key={key} label={label} type="number" value={(form.stats as any)[key]} onChange={(e) => updateStats(key, parseInt(e.target.value) || 0)} />
             ))}
           </div>
           <Button onClick={handleSave} isLoading={saving || uploading} className="w-full">

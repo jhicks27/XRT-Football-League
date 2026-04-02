@@ -29,12 +29,15 @@ export interface PlayerStats {
   passingYards: number;
   rushingYards: number;
   receivingYards: number;
+  completions: number;
+  attempts: number;
   tackles: number;
   sacks: number;
   interceptions: number;
+  pbu: number;
+  fumbles: number;
+  pancakes: number;
   fieldGoals: number;
-  completions: number;
-  attempts: number;
 }
 
 export interface Player {

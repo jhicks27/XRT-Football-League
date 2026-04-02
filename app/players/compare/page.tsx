@@ -136,11 +136,13 @@ export default function ComparePlayersPage() {
     { key: "passingYards", label: "Pass Yards" },
     { key: "rushingYards", label: "Rush Yards" },
     { key: "receivingYards", label: "Rec Yards" },
+    { key: "completions", label: "Completions" },
     { key: "tackles", label: "Tackles" },
     { key: "sacks", label: "Sacks" },
     { key: "interceptions", label: "INTs" },
-    { key: "completions", label: "Completions" },
-    { key: "fieldGoals", label: "Field Goals" },
+    { key: "pbu", label: "PBU" },
+    { key: "fumbles", label: "Fumbles" },
+    { key: "pancakes", label: "Pancakes" },
   ];
 
   const getWinCount = () => {

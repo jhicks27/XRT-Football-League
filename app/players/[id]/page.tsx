@@ -19,18 +19,23 @@ export default function PlayerDetailPage() {
   if (loading) return <LoadingSpinner size="lg" />;
   if (!player) return <div className="text-center py-20 text-gray-500">Player not found</div>;
 
-  const statGroups = [
+  const offenseStats = [
     { label: "Games Played", value: player.stats.gamesPlayed },
     { label: "Touchdowns", value: player.stats.touchdowns, highlight: true },
     { label: "Passing Yards", value: player.stats.passingYards.toLocaleString() },
     { label: "Rushing Yards", value: player.stats.rushingYards.toLocaleString() },
     { label: "Receiving Yards", value: player.stats.receivingYards.toLocaleString() },
+    { label: "Completions", value: player.stats.completions },
+    { label: "Attempts", value: player.stats.attempts },
+  ];
+
+  const defenseStats = [
     { label: "Tackles", value: player.stats.tackles },
     { label: "Sacks", value: player.stats.sacks },
     { label: "Interceptions", value: player.stats.interceptions },
-    { label: "Completions", value: player.stats.completions },
-    { label: "Attempts", value: player.stats.attempts },
-    { label: "Field Goals", value: player.stats.fieldGoals },
+    { label: "PBU", value: player.stats.pbu || 0 },
+    { label: "Fumbles", value: player.stats.fumbles || 0 },
+    { label: "Pancakes", value: player.stats.pancakes || 0 },
   ];
 
   return (
@@ -73,14 +78,26 @@ export default function PlayerDetailPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <Card className="p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary-600" /> Season Stats
+            <TrendingUp className="w-5 h-5 text-primary-600" /> Offense
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {statGroups.map((stat) => (
+            {offenseStats.map((stat) => (
               <div key={stat.label} className={`p-4 rounded-xl text-center ${stat.highlight ? "bg-primary-50 dark:bg-primary-950 border border-primary-200 dark:border-primary-800" : "bg-gray-50 dark:bg-gray-800/50"}`}>
                 <p className={`text-2xl font-black ${stat.highlight ? "text-primary-600" : "text-gray-900 dark:text-white"}`}>
                   {stat.value}
                 </p>
+                <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 mt-8 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary-600" /> Defense
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {defenseStats.map((stat) => (
+              <div key={stat.label} className="p-4 rounded-xl text-center bg-gray-50 dark:bg-gray-800/50">
+                <p className="text-2xl font-black text-gray-900 dark:text-white">{stat.value}</p>
                 <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
               </div>
             ))}
