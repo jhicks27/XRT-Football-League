@@ -16,7 +16,7 @@ import { Team } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import Image from "next/image";
 
-const emptyTeam = { name: "", abbreviation: "", conference: "", division: "", logoUrl: "", wins: 0, losses: 0, ties: 0, points: 0 };
+const emptyTeam = { name: "", abbreviation: "", conference: "", division: "", logoUrl: "", wins: 0, losses: 0, ties: 0, points: 0, headCoach: "", assistantCoach: "" };
 
 export default function AdminTeamsPage() {
   const { data: teams, loading } = useCollection<Team>("teams", [orderBy("name")]);
@@ -39,7 +39,7 @@ export default function AdminTeamsPage() {
 
   const openEdit = (team: Team) => {
     setEditingTeam(team);
-    setForm({ name: team.name, abbreviation: team.abbreviation, conference: team.conference, division: team.division, logoUrl: team.logoUrl, wins: team.wins, losses: team.losses, ties: team.ties, points: team.points });
+    setForm({ name: team.name, abbreviation: team.abbreviation, conference: team.conference, division: team.division, logoUrl: team.logoUrl, wins: team.wins, losses: team.losses, ties: team.ties, points: team.points, headCoach: team.headCoach || "", assistantCoach: team.assistantCoach || "" });
     setLogoFile(null);
     setModalOpen(true);
   };
@@ -129,6 +129,10 @@ export default function AdminTeamsPage() {
             <Input label="Ties" type="number" value={form.ties} onChange={(e) => setForm({ ...form, ties: parseInt(e.target.value) || 0 })} />
           </div>
           <Input label="Points" type="number" value={form.points} onChange={(e) => setForm({ ...form, points: parseInt(e.target.value) || 0 })} />
+          <div className="grid grid-cols-2 gap-4">
+            <Input label="Head Coach" value={form.headCoach} onChange={(e) => setForm({ ...form, headCoach: e.target.value })} placeholder="Coach name" />
+            <Input label="Assistant Coach" value={form.assistantCoach} onChange={(e) => setForm({ ...form, assistantCoach: e.target.value })} placeholder="Coach name" />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Team Logo</label>
             <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} className="text-sm text-gray-500" />

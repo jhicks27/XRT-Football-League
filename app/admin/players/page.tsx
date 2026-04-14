@@ -15,7 +15,7 @@ import { Player, Team } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import Image from "next/image";
 
-const emptyStats = { gamesPlayed: 0, touchdowns: 0, passingYards: 0, rushingYards: 0, receivingYards: 0, completions: 0, attempts: 0, tackles: 0, sacks: 0, interceptions: 0, pbu: 0, fumbles: 0, pancakes: 0, fieldGoals: 0 };
+const emptyStats = { gamesPlayed: 0, touchdowns: 0, passingYards: 0, rushingYards: 0, receivingYards: 0, completions: 0, attempts: 0, kickReturnTDs: 0, interceptionsThrown: 0, tackles: 0, tacklesForLoss: 0, sacks: 0, interceptions: 0, pbu: 0, forcedFumbles: 0, fumbles: 0, pancakes: 0, fieldGoals: 0 };
 const emptyPlayer = { name: "", teamId: "", teamName: "", number: "", position: "", imageUrl: "", height: "", weight: 0, age: 0, experience: "Rookie", stats: emptyStats };
 
 export default function AdminPlayersPage() {
@@ -154,13 +154,13 @@ export default function AdminPlayersPage() {
           </div>
           <h3 className="font-bold text-gray-900 dark:text-white text-sm pt-2 border-t border-gray-200 dark:border-gray-700">Offense</h3>
           <div className="grid grid-cols-2 gap-3">
-            {[["passingYards", "Passing Yards"], ["rushingYards", "Rushing Yards"], ["receivingYards", "Receiving Yards"], ["completions", "Completions"], ["attempts", "Attempts"]].map(([key, label]) => (
+            {[["passingYards", "Passing Yards"], ["rushingYards", "Rushing Yards"], ["receivingYards", "Receiving Yards"], ["completions", "Completions"], ["attempts", "Attempts"], ["kickReturnTDs", "Kick Return TDs"], ["interceptionsThrown", "INTs Thrown"]].map(([key, label]) => (
               <Input key={key} label={label} type="number" value={(form.stats as any)[key]} onChange={(e) => updateStats(key, parseInt(e.target.value) || 0)} />
             ))}
           </div>
           <h3 className="font-bold text-gray-900 dark:text-white text-sm pt-2 border-t border-gray-200 dark:border-gray-700">Defense</h3>
           <div className="grid grid-cols-2 gap-3">
-            {[["tackles", "Tackles"], ["sacks", "Sacks"], ["interceptions", "Interceptions"], ["pbu", "PBU"], ["fumbles", "Fumbles"], ["pancakes", "Pancakes"]].map(([key, label]) => (
+            {[["tackles", "Tackles"], ["tacklesForLoss", "Tackles For Loss"], ["sacks", "Sacks"], ["interceptions", "Interceptions"], ["pbu", "PBU"], ["forcedFumbles", "Forced Fumbles"], ["fumbles", "Fumbles"], ["pancakes", "Pancakes"]].map(([key, label]) => (
               <Input key={key} label={label} type="number" value={(form.stats as any)[key]} onChange={(e) => updateStats(key, parseInt(e.target.value) || 0)} />
             ))}
           </div>

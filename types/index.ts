@@ -20,6 +20,8 @@ export interface Team {
   points: number;
   conference: string;
   division: string;
+  headCoach: string;
+  assistantCoach: string;
   createdAt: string;
 }
 
@@ -31,10 +33,14 @@ export interface PlayerStats {
   receivingYards: number;
   completions: number;
   attempts: number;
+  kickReturnTDs: number;
+  interceptionsThrown: number;
   tackles: number;
+  tacklesForLoss: number;
   sacks: number;
   interceptions: number;
   pbu: number;
+  forcedFumbles: number;
   fumbles: number;
   pancakes: number;
   fieldGoals: number;

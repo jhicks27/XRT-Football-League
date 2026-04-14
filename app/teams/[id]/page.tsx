@@ -48,6 +48,12 @@ export default function TeamDetailPage() {
             <div className="text-center md:text-left flex-1">
               <h1 className="text-3xl font-black text-gray-900 dark:text-white">{team.name}</h1>
               <p className="text-gray-500 mt-1">{team.conference} Conference · {team.division} Division</p>
+              {(team.headCoach || team.assistantCoach) && (
+                <div className="flex items-center gap-4 mt-2 justify-center md:justify-start text-sm">
+                  {team.headCoach && <span className="text-gray-400"><span className="font-semibold text-gray-300">HC:</span> {team.headCoach}</span>}
+                  {team.assistantCoach && <span className="text-gray-400"><span className="font-semibold text-gray-300">AC:</span> {team.assistantCoach}</span>}
+                </div>
+              )}
               <div className="flex items-center gap-6 mt-4 justify-center md:justify-start">
                 <div className="text-center">
                   <p className="text-2xl font-black text-green-600">{team.wins}</p>

@@ -27,13 +27,17 @@ export default function PlayerDetailPage() {
     { label: "Receiving Yards", value: player.stats.receivingYards.toLocaleString() },
     { label: "Completions", value: player.stats.completions },
     { label: "Attempts", value: player.stats.attempts },
+    { label: "Kick Return TDs", value: player.stats.kickReturnTDs || 0 },
+    { label: "INTs Thrown", value: player.stats.interceptionsThrown || 0 },
   ];
 
   const defenseStats = [
     { label: "Tackles", value: player.stats.tackles },
+    { label: "Tackles For Loss", value: player.stats.tacklesForLoss || 0 },
     { label: "Sacks", value: player.stats.sacks },
     { label: "Interceptions", value: player.stats.interceptions },
     { label: "PBU", value: player.stats.pbu || 0 },
+    { label: "Forced Fumbles", value: player.stats.forcedFumbles || 0 },
     { label: "Fumbles", value: player.stats.fumbles || 0 },
     { label: "Pancakes", value: player.stats.pancakes || 0 },
   ];
