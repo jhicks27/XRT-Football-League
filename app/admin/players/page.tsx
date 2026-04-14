@@ -46,8 +46,24 @@ export default function AdminPlayersPage() {
       if (imageFile) {
         imageUrl = await uploadFile(imageFile, `players/${Date.now()}_${imageFile.name}`);
       }
+      // Auto-increment gamesPlayed when stats are updated
+      const stats = { ...form.stats };
+      if (editing) {
+        const oldStats = editing.stats || {};
+        const statKeys = Object.keys(stats).filter(k => k !== "gamesPlayed");
+        const hasNewStats = statKeys.some(k => (stats as any)[k] > ((oldStats as any)[k] || 0));
+        if (hasNewStats) {
+          stats.gamesPlayed = (editing.stats?.gamesPlayed || 0) + 1;
+        }
+      } else {
+        // New player — if any stat is filled in, set gamesPlayed to 1
+        const hasAnyStats = Object.entries(stats).some(([k, v]) => k !== "gamesPlayed" && v > 0);
+        if (hasAnyStats && stats.gamesPlayed === 0) {
+          stats.gamesPlayed = 1;
+        }
+      }
       const selectedTeam = teams.find(t => t.id === form.teamId);
-      const data = { ...form, imageUrl, teamName: selectedTeam?.name || form.teamName };
+      const data = { ...form, stats, imageUrl, teamName: selectedTeam?.name || form.teamName };
       if (editing) {
         await updateDocument("players", editing.id, data);
         await logActivity("updated", "player", editing.id, `Updated player: ${form.name}`);
