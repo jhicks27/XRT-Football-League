@@ -6,8 +6,8 @@ import { ArrowLeft, TrendingUp } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { useDocument, useCollection } from "@/hooks/useFirestore";
-import { Player, Game } from "@/types";
+import { useDocument } from "@/hooks/useFirestore";
+import { Player } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,18 +15,12 @@ export default function PlayerDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { data: player, loading } = useDocument<Player>("players", params.id as string);
-  const { data: games } = useCollection<Game>("games");
 
   if (loading) return <LoadingSpinner size="lg" />;
   if (!player) return <div className="text-center py-20 text-gray-500">Player not found</div>;
 
-  // Auto-count games played based on completed games for this player's team
-  const autoGamesPlayed = games.filter(
-    (g) => g.status === "final" && (g.homeTeamId === player.teamId || g.awayTeamId === player.teamId)
-  ).length;
-
   const offenseStats = [
-    { label: "Games Played", value: autoGamesPlayed || player.stats.gamesPlayed },
+    { label: "Games Played", value: player.stats.gamesPlayed },
     { label: "Touchdowns", value: player.stats.touchdowns, highlight: true },
     { label: "Passing Yards", value: player.stats.passingYards.toLocaleString() },
     { label: "Rushing Yards", value: player.stats.rushingYards.toLocaleString() },

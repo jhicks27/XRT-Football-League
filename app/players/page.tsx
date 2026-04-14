@@ -9,7 +9,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import Badge from "@/components/ui/Badge";
 import EmptyState from "@/components/ui/EmptyState";
 import { useCollection } from "@/hooks/useFirestore";
-import { Player, Game } from "@/types";
+import { Player } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -19,7 +19,6 @@ const positions = ["All", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "CB", "ATH"]
 
 export default function PlayersPage() {
   const { data: players, loading } = useCollection<Player>("players", [orderBy("name")]);
-  const { data: games } = useCollection<Game>("games");
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState("All");
   const [view, setView] = useState<"grid" | "leaderboard">("grid");
@@ -110,7 +109,7 @@ export default function PlayersPage() {
                     <p className="text-sm text-gray-500">#{player.number} · {player.position}</p>
                     <p className="text-xs text-gray-400 mt-1">{player.teamName}</p>
                     <div className="flex justify-center gap-3 mt-3 text-xs">
-                      <span className="text-gray-500">{games.filter(g => g.status === "final" && (g.homeTeamId === player.teamId || g.awayTeamId === player.teamId)).length} GP</span>
+                      <span className="text-gray-500">{player.stats.gamesPlayed} GP</span>
                       <span className="text-primary-600 font-bold">{player.stats.touchdowns} TDs</span>
                       <span className="text-gray-500">{player.stats.passingYards + player.stats.rushingYards + player.stats.receivingYards} YDs</span>
                     </div>
