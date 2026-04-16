@@ -153,8 +153,8 @@ export default function ComparePlayersPage() {
     if (!player1 || !player2) return { p1: 0, p2: 0 };
     let p1 = 0, p2 = 0;
     statKeys.forEach(({ key }) => {
-      if (player1.stats[key] > player2.stats[key]) p1++;
-      else if (player2.stats[key] > player1.stats[key]) p2++;
+      if ((player1.stats?.[key] || 0) > (player2.stats?.[key] || 0)) p1++;
+      else if ((player2.stats?.[key] || 0) > (player1.stats?.[key] || 0)) p2++;
     });
     return { p1, p2 };
   };
@@ -218,8 +218,8 @@ export default function ComparePlayersPage() {
                 <StatBar
                   key={key}
                   label={label}
-                  value1={player1.stats[key]}
-                  value2={player2.stats[key]}
+                  value1={player1.stats?.[key] || 0}
+                  value2={player2.stats?.[key] || 0}
                   name1={player1.name}
                   name2={player2.name}
                 />
