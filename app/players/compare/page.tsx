@@ -12,18 +12,20 @@ import { Player } from "@/types";
 import { orderBy } from "@/hooks/useFirestore";
 import Image from "next/image";
 
-function StatBar({ label, value1, value2, name1, name2 }: { label: string; value1: number; value2: number; name1: string; name2: string }) {
-  const max = Math.max(value1, value2, 1);
-  const pct1 = (value1 / max) * 100;
-  const pct2 = (value2 / max) * 100;
-  const winner = value1 > value2 ? 1 : value2 > value1 ? 2 : 0;
+function StatBar({ label, value1, value2 }: { label: string; value1: number; value2: number; name1?: string; name2?: string }) {
+  const v1 = value1 || 0;
+  const v2 = value2 || 0;
+  const max = Math.max(v1, v2, 1);
+  const pct1 = (v1 / max) * 100;
+  const pct2 = (v2 / max) * 100;
+  const winner = v1 > v2 ? 1 : v2 > v1 ? 2 : 0;
 
   return (
     <div className="py-3">
       <div className="flex items-center justify-between mb-1">
-        <span className={`text-sm font-bold ${winner === 1 ? "text-primary-600" : "text-gray-500"}`}>{value1.toLocaleString()}</span>
+        <span className={`text-sm font-bold ${winner === 1 ? "text-primary-600" : "text-gray-500"}`}>{v1.toLocaleString()}</span>
         <span className="text-xs font-semibold text-gray-400 uppercase">{label}</span>
-        <span className={`text-sm font-bold ${winner === 2 ? "text-primary-600" : "text-gray-500"}`}>{value2.toLocaleString()}</span>
+        <span className={`text-sm font-bold ${winner === 2 ? "text-primary-600" : "text-gray-500"}`}>{v2.toLocaleString()}</span>
       </div>
       <div className="flex gap-1">
         <div className="flex-1 flex justify-end">
@@ -56,8 +58,8 @@ function PlayerSelector({ players, selected, onSelect, search, onSearch, label }
   label: string;
 }) {
   const filtered = players.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.position.toLowerCase().includes(search.toLowerCase())
+    (p.name || "").toLowerCase().includes(search.toLowerCase()) ||
+    (p.position || "").toLowerCase().includes(search.toLowerCase())
   );
 
   if (selected) {
