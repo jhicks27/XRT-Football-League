@@ -16,9 +16,9 @@ export default function StatsHighlight() {
   const topPlayer = topPlayers[0];
 
   // Calculate league-wide stats
-  const totalTDs = allPlayers.reduce((sum, p) => sum + p.stats.touchdowns, 0);
-  const totalYards = allPlayers.reduce((sum, p) => sum + p.stats.passingYards + p.stats.rushingYards + p.stats.receivingYards, 0);
-  const totalSacks = allPlayers.reduce((sum, p) => sum + p.stats.sacks, 0);
+  const totalTDs = allPlayers.reduce((sum, p) => sum + (p.stats?.touchdowns || 0), 0);
+  const totalYards = allPlayers.reduce((sum, p) => sum + (p.stats?.passingYards || 0) + (p.stats?.rushingYards || 0) + (p.stats?.receivingYards || 0), 0);
+  const totalSacks = allPlayers.reduce((sum, p) => sum + (p.stats?.sacks || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -41,7 +41,7 @@ export default function StatsHighlight() {
               <div>
                 <p className="text-lg font-black text-gray-900 dark:text-white">{topPlayer.name}</p>
                 <p className="text-sm text-gray-500">{topPlayer.position} · {topPlayer.teamName}</p>
-                <p className="text-sm font-bold text-primary-600 mt-1">{topPlayer.stats.touchdowns} TDs · {(topPlayer.stats.passingYards + topPlayer.stats.rushingYards + topPlayer.stats.receivingYards).toLocaleString()} YDs</p>
+                <p className="text-sm font-bold text-primary-600 mt-1">{topPlayer.stats?.touchdowns || 0} TDs · {((topPlayer.stats?.passingYards || 0) + (topPlayer.stats?.rushingYards || 0) + (topPlayer.stats?.receivingYards || 0)).toLocaleString()} YDs</p>
               </div>
             </Link>
           </Card>

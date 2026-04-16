@@ -19,27 +19,29 @@ export default function PlayerDetailPage() {
   if (loading) return <LoadingSpinner size="lg" />;
   if (!player) return <div className="text-center py-20 text-gray-500">Player not found</div>;
 
+  const s = player.stats || {} as any;
+
   const offenseStats = [
-    { label: "Games Played", value: player.stats.gamesPlayed },
-    { label: "Touchdowns", value: player.stats.touchdowns, highlight: true },
-    { label: "Passing Yards", value: player.stats.passingYards.toLocaleString() },
-    { label: "Rushing Yards", value: player.stats.rushingYards.toLocaleString() },
-    { label: "Receiving Yards", value: player.stats.receivingYards.toLocaleString() },
-    { label: "Completions", value: player.stats.completions },
-    { label: "Attempts", value: player.stats.attempts },
-    { label: "Kick Return TDs", value: player.stats.kickReturnTDs || 0 },
-    { label: "INTs Thrown", value: player.stats.interceptionsThrown || 0 },
+    { label: "Games Played", value: s.gamesPlayed || 0 },
+    { label: "Touchdowns", value: s.touchdowns || 0, highlight: true },
+    { label: "Passing Yards", value: (s.passingYards || 0).toLocaleString() },
+    { label: "Rushing Yards", value: (s.rushingYards || 0).toLocaleString() },
+    { label: "Receiving Yards", value: (s.receivingYards || 0).toLocaleString() },
+    { label: "Completions", value: s.completions || 0 },
+    { label: "Attempts", value: s.attempts || 0 },
+    { label: "Kick Return TDs", value: s.kickReturnTDs || 0 },
+    { label: "INTs Thrown", value: s.interceptionsThrown || 0 },
   ];
 
   const defenseStats = [
-    { label: "Tackles", value: player.stats.tackles },
-    { label: "Tackles For Loss", value: player.stats.tacklesForLoss || 0 },
-    { label: "Sacks", value: player.stats.sacks },
-    { label: "Interceptions", value: player.stats.interceptions },
-    { label: "PBU", value: player.stats.pbu || 0 },
-    { label: "Forced Fumbles", value: player.stats.forcedFumbles || 0 },
-    { label: "Fumbles", value: player.stats.fumbles || 0 },
-    { label: "Pancakes", value: player.stats.pancakes || 0 },
+    { label: "Tackles", value: s.tackles || 0 },
+    { label: "Tackles For Loss", value: s.tacklesForLoss || 0 },
+    { label: "Sacks", value: s.sacks || 0 },
+    { label: "Interceptions", value: s.interceptions || 0 },
+    { label: "PBU", value: s.pbu || 0 },
+    { label: "Forced Fumbles", value: s.forcedFumbles || 0 },
+    { label: "Fumbles", value: s.fumbles || 0 },
+    { label: "Pancakes", value: s.pancakes || 0 },
   ];
 
   return (

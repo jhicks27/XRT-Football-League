@@ -17,6 +17,16 @@ import Image from "next/image";
 
 const positions = ["All", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "CB", "ATH"];
 
+const safeStats = (s: any) => ({
+  gamesPlayed: s?.gamesPlayed || 0, touchdowns: s?.touchdowns || 0,
+  passingYards: s?.passingYards || 0, rushingYards: s?.rushingYards || 0, receivingYards: s?.receivingYards || 0,
+  completions: s?.completions || 0, attempts: s?.attempts || 0,
+  kickReturnTDs: s?.kickReturnTDs || 0, interceptionsThrown: s?.interceptionsThrown || 0,
+  tackles: s?.tackles || 0, tacklesForLoss: s?.tacklesForLoss || 0, sacks: s?.sacks || 0,
+  interceptions: s?.interceptions || 0, pbu: s?.pbu || 0,
+  forcedFumbles: s?.forcedFumbles || 0, fumbles: s?.fumbles || 0, pancakes: s?.pancakes || 0, fieldGoals: s?.fieldGoals || 0,
+});
+
 export default function PlayersPage() {
   const { data: players, loading } = useCollection<Player>("players", [orderBy("name")]);
   const [search, setSearch] = useState("");
@@ -109,9 +119,9 @@ export default function PlayersPage() {
                     <p className="text-sm text-gray-500">#{player.number} · {player.position}</p>
                     <p className="text-xs text-gray-400 mt-1">{player.teamName}</p>
                     <div className="flex justify-center gap-3 mt-3 text-xs">
-                      <span className="text-gray-500">{player.stats.gamesPlayed} GP</span>
-                      <span className="text-primary-600 font-bold">{player.stats.touchdowns} TDs</span>
-                      <span className="text-gray-500">{player.stats.passingYards + player.stats.rushingYards + player.stats.receivingYards} YDs</span>
+                      <span className="text-gray-500">{safeStats(player.stats).gamesPlayed} GP</span>
+                      <span className="text-primary-600 font-bold">{safeStats(player.stats).touchdowns} TDs</span>
+                      <span className="text-gray-500">{safeStats(player.stats).passingYards + safeStats(player.stats).rushingYards + safeStats(player.stats).receivingYards} YDs</span>
                     </div>
                   </div>
                 </Card>
@@ -161,15 +171,15 @@ export default function PlayersPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3"><Badge>{p.position}</Badge></td>
-                    <td className="px-4 py-3 text-right font-bold text-primary-600">{p.stats.touchdowns}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.passingYards.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.rushingYards.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.receivingYards.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.tackles}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.sacks}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.interceptions}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.pbu || 0}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{p.stats.fumbles || 0}</td>
+                    <td className="px-4 py-3 text-right font-bold text-primary-600">{safeStats(p.stats).touchdowns}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).passingYards.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).rushingYards.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).receivingYards.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).tackles}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).sacks}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).interceptions}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).pbu}</td>
+                    <td className="px-4 py-3 text-right text-sm text-gray-600 dark:text-gray-300">{safeStats(p.stats).fumbles}</td>
                   </tr>
                 ))}
               </tbody>
