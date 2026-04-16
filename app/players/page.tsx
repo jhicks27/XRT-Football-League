@@ -98,9 +98,9 @@ export default function PlayersPage() {
               <motion.div key={player.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}>
                 <Card hover onClick={() => router.push(`/players/${player.id}`)}>
                   <div className="p-5 text-center">
-                    <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                    <div className="w-24 h-24 mx-auto mb-3 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                       {player.imageUrl ? (
-                        <Image src={player.imageUrl} alt={player.name} width={64} height={64} className="object-cover" />
+                        <Image src={player.imageUrl} alt={player.name} width={96} height={96} className="object-cover w-full h-full" />
                       ) : (
                         <span className="text-lg font-bold text-gray-400">#{player.number}</span>
                       )}
@@ -146,8 +146,19 @@ export default function PlayersPage() {
                       <span className={`font-bold ${idx < 3 ? "text-primary-600" : "text-gray-400"}`}>{idx + 1}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-semibold text-gray-900 dark:text-white text-sm">{p.name}</p>
-                      <p className="text-xs text-gray-500">{p.teamName}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                          {p.imageUrl ? (
+                            <Image src={p.imageUrl} alt={p.name} width={40} height={40} className="object-cover w-full h-full" />
+                          ) : (
+                            <span className="text-xs font-bold text-gray-400">#{p.number}</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900 dark:text-white text-sm">{p.name}</p>
+                          <p className="text-xs text-gray-500">{p.teamName}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-3"><Badge>{p.position}</Badge></td>
                     <td className="px-4 py-3 text-right font-bold text-primary-600">{p.stats.touchdowns}</td>
